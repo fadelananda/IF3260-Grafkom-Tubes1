@@ -1,0 +1,26 @@
+{
+  "name": "if3260-grafkom-tucil1",
+  "version": "1.0.0",
+  "description": "tugas kecil 1 IF3260 Grafika Komputer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fadelananda/IF3260-Grafkom-Tucil1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fadelananda/IF3260-Grafkom-Tucil1/issues"
+  },
+  "homepage": "https://github.com/fadelananda/IF3260-Grafkom-Tucil1#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
