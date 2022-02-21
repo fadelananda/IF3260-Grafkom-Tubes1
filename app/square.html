@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="square.js" defer></script>
+  <title>Tucil 1 Grafkom</title>
+</head>
+<body>
+  <h1>Persegi</h1>
+  <canvas id="glcanvas" width="600" height="400"></canvas>
+  <script  id="vertex-shader-2d" type="notjs">
+
+    // an attribute will receive data from a buffer
+    attribute vec2 a_position;
+  
+    // all shaders have a main function
+    uniform vec2 u_resolution;
+
+    void main() {
+        // convert the position from pixels to 0.0 to 1.0
+        vec2 zeroToOne = a_position.xy / u_resolution;
+
+        // convert from 0->1 to 0->2
+        vec2 zeroToTwo = zeroToOne * 2.0;
+
+        // convert from 0->2 to -1->+1 (clipspace)
+        vec2 clipSpace = zeroToTwo - 1.0;
+   
+
+        // gl_Position is a special variable a vertex shader
+        // is responsible for setting
+        gl_Position = vec4(clipSpace*vec2(1, -1), 0, 1);
+    }
+  
+  </script>
+  <script  id="fragment-shader" type="notjs">
+
+    // fragment shaders don't have a default precision so we need
+    // to pick one. mediump is a good default
+    precision mediump float;
+  
+    void main() {
+      // gl_FragColor is a special variable a fragment shader
+      // is responsible for setting
+      gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+    }
+  
+  </script>
+</body>
+<h3>Default length: 100px</h3>
+<h3>Canvas width: 600px</h3>
+<label for="square-length">Panjang sisi (px): </label>
+<input type="number" id="square-length" value="100"> <br />
+</html>
