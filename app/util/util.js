@@ -41,10 +41,29 @@ const createGlBuffer = (gl, array, program) => {
   /**
    * Create buffer and get attribute
    */
+  var vertices = []
+  for (let i = 0; i < array.length/8; i++) {
+    var tri1 = [
+      array[6+i*8], array[7+i*8],
+      array[4+i*8], array[5+i*8],
+      array[2+i*8], array[3+i*8],
+    ]
+  
+    var tri2 = [
+      array[6+i*8], array[7+i*8],
+      array[2+i*8], array[3+i*8],
+      array[0+i*8], array[1+i*8],
+    ]
+    if (!tri1.includes(undefined) && !tri2.includes(undefined)){
+      vertices = vertices.concat(tri1).concat(tri2)
+      console.log("drawn");
+    }
+  }
+  console.log(vertices)
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) throw new Error("failed to create buffer");
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
   var aPosition = gl.getAttribLocation(program, "a_position");
   if (aPosition < 0) throw new Error("failed to get attribute from program");
@@ -66,7 +85,7 @@ const createGlBuffer = (gl, array, program) => {
 
   gl.enableVertexAttribArray(aPosition);
 
-  return array.length/size;
+  return array.length;
 };
 
 const draw = (gl, array, program, type) => {

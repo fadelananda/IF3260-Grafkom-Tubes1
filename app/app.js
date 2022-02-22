@@ -29,12 +29,12 @@ function main() {
 
   gl.useProgram(program);
 
-  var vertices = [
-    -0.5, -0.5, -0.5, +0.5, 0.0, +0.5, 0.0, 0.0, 0.0, -0.5, +0.5, -0.5,
-  ];
+//   var vertices = [
+//     -0.5, -0.5, -0.5, +0.5, 0.0, +0.5, 0.0, 0.0, 0.0, -0.5, +0.5, -0.5,
+//   ];
 
   setUpCanvasBackground(gl);
-  draw(gl, vertices, program, gl.TRIANGLES);
+//   draw(gl, vertices, program, gl.TRIANGLES);
 
   canvas.addEventListener("mousedown", (event) => {
     // console.log(getCoordinate(event, [], canvas));
