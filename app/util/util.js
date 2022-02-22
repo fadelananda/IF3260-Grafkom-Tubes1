@@ -42,17 +42,37 @@ const createGlBuffer = (gl, array, program) => {
    * Create buffer and get attribute
    */
   var vertices = []
-  for (let i = 0; i < array.length/8; i++) {
+  // gambar poligon
+  // for (let i = 0; i < array.length/8; i++) {
+  //   var tri1 = [
+  //     array[6+i*8], array[7+i*8],
+  //     array[4+i*8], array[5+i*8],
+  //     array[2+i*8], array[3+i*8],
+  //   ]
+  
+  //   var tri2 = [
+  //     array[6+i*8], array[7+i*8],
+  //     array[2+i*8], array[3+i*8],
+  //     array[0+i*8], array[1+i*8],
+  //   ]
+  //   if (!tri1.includes(undefined) && !tri2.includes(undefined)){
+  //     vertices = vertices.concat(tri1).concat(tri2)
+  //     console.log("drawn");
+  //   }
+  // }
+  //gambar persegi panjang
+  for (let i = 0; i < array.length/4; i++) {
+    // (1,1) (2,2)
     var tri1 = [
-      array[6+i*8], array[7+i*8],
-      array[4+i*8], array[5+i*8],
-      array[2+i*8], array[3+i*8],
+      array[0+i*4], array[1+i*4],
+      array[2+i*4], array[3+i*4],
+      array[0+i*4], array[3+i*4],
     ]
   
     var tri2 = [
-      array[6+i*8], array[7+i*8],
-      array[2+i*8], array[3+i*8],
-      array[0+i*8], array[1+i*8],
+      array[0+i*4], array[1+i*4],
+      array[2+i*4], array[3+i*4],
+      array[2+i*4], array[1+i*4],
     ]
     if (!tri1.includes(undefined) && !tri2.includes(undefined)){
       vertices = vertices.concat(tri1).concat(tri2)
@@ -85,7 +105,7 @@ const createGlBuffer = (gl, array, program) => {
 
   gl.enableVertexAttribArray(aPosition);
 
-  return array.length;
+  return vertices.length/2;
 };
 
 const draw = (gl, array, program, type) => {
