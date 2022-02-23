@@ -76,7 +76,6 @@ const createGlBuffer = (gl, array, program) => {
     ]
     if (!tri1.includes(undefined) && !tri2.includes(undefined)){
       vertices = vertices.concat(tri1).concat(tri2)
-      console.log("drawn");
     }
   }
   console.log(vertices)
@@ -113,10 +112,36 @@ const draw = (gl, array, program, type) => {
   if (n<0) throw new Error('failed to initialize buffer');
 
   
+
+  
   // gl.drawArrays(gl.LINE_STRIP, 0, n);
   // gl.drawArrays(gl.LINE_LOOP, 0, n);
   gl.drawArrays(type, 0, n);
   // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+};
+
+const incColor = (gl, type, fColor) => {
+  switch (type) {
+    case "R":
+      gl.uniform4f(fColor, 1, 0, 0, 1);
+      console.log("r");
+      break;
+    case "G":
+      gl.uniform4f(fColor, 0, 1, 0, 1);
+      console.log("g");
+      break;
+    case "B":
+      gl.uniform4f(fColor, 0, 0, 1, 1);
+      console.log("b");
+      break;
+    case "A":
+      gl.uniform4f(fColor, 0, 0, 0, 1);
+      console.log("a");
+      break;
+  
+    default:
+      break;
+  }
 };
 
 const getCoordinate = (event, points, canvas) => {
@@ -130,4 +155,4 @@ const getCoordinate = (event, points, canvas) => {
   return {x:((x - rect.left) - midX)/midX, y:(midY - (y - rect.top))/midY};
 }
 
-export { setUpCanvasBackground, createProgram, createShader, draw, getCoordinate };
+export { setUpCanvasBackground, createProgram, createShader, draw, getCoordinate, incColor };
