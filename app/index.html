@@ -1,41 +1,58 @@
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="module" src="app.js" defer></script>
-  <title>Tucil 1 Grafkom</title>
-</head>
-<body>
-  <h1>Tugas Kecil 1 WebGL</h1>
-  <canvas id="glcanvas" width="600" height="400"></canvas>
-  <script  id="vertex-shader" type="notjs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <script type="module" src="app.js" defer></script>
+    <title>Tucil 1 Grafkom</title>
+  </head>
+  <body>
+    <h1>Tugas 1 WebGL</h1>
 
-    // an attribute will receive data from a buffer
-    attribute vec4 a_position;
-  
-    // all shaders have a main function
-    void main() {
-  
-      // gl_Position is a special variable a vertex shader
-      // is responsible for setting
-      gl_Position = a_position;
-      gl_PointSize = 10.0;
-    }
-  
-  </script>
-  <script  id="fragment-shader" type="notjs">
+    <div class="center">
+      <canvas id="glcanvas" width="800" height=600"></canvas>
+    </div>
 
-    // fragment shaders don't have a default precision so we need
-    // to pick one. mediump is a good default
-    precision mediump float;
-  
-    void main() {
-      // gl_FragColor is a special variable a fragment shader
-      // is responsible for setting
-      gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
-    }
-  
-  </script>
-</body>
+    <div class="center" style="margin: 1em">
+      <h2>Export Canvas:</h2>
+      <input
+        type="text"
+        name="export-filename"
+        id="export-filename"
+        placeholder="insert model name"
+      />
+      <button id="save-btn">Download</button>
+      <h2>Import Model:</h2>
+      <input type="file" name="import-filename" id="import-filename" />
+      <button id="import-btn">Load Model</button>
+    </div>
+
+    <script id="vertex-shader" type="notjs">
+
+      // an attribute will receive data from a buffer
+      attribute vec4 a_position;
+
+      // all shaders have a main function
+      void main() {
+
+        // gl_Position is a special variable a vertex shader
+        // is responsible for setting
+        gl_Position = a_position;
+        gl_PointSize = 10.0;
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+
+      // fragment shaders don't have a default precision so we need
+      // to pick one. mediump is a good default
+      precision mediump float;
+
+      void main() {
+        // gl_FragColor is a special variable a fragment shader
+        // is responsible for setting
+        gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+      }
+    </script>
+  </body>
 </html>

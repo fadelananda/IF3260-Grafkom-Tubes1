@@ -1,13 +1,22 @@
+import { drawTriangles } from "./util/triangles.js";
 import {
   setUpCanvasBackground,
   createShader,
   createProgram,
   draw,
   getCoordinate,
+  saveModel,
 } from "./util/util.js";
 
 function main() {
   const canvas = document.querySelector("canvas");
+
+  const saveBtn = document.querySelector("#save-btn");
+  const importBtn = document.querySelector("#import-btn");
+
+  const exportFileName = document.querySelector("#export-filename");
+  const importFileName = document.querySelector("#import-filename");
+
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
   const points = [];
 
@@ -34,7 +43,7 @@ function main() {
   ];
 
   setUpCanvasBackground(gl);
-  draw(gl, vertices, program, gl.TRIANGLES);
+  // draw(gl, vertices, program, gl.TRIANGLES);
 
   canvas.addEventListener("mousedown", (event) => {
     // console.log(getCoordinate(event, [], canvas));
@@ -42,7 +51,33 @@ function main() {
     // var point = getCoordinate(event, points, canvas)
     points.push(getCoordinate(event, points, canvas).x);
     points.push(getCoordinate(event, points, canvas).y);
-    draw(gl, points, program, gl.TRIANGLES);
+    // draw(gl, points, program, gl.TRIANGLES);
+    drawTriangles(gl, points, program);
+  });
+
+  // used to save the model
+  saveBtn.addEventListener("click", () => {
+    console.log(exportFileName.value);
+    var value = {
+      name: `${exportFileName.value}`,
+      vertices: points,
+    };
+    saveModel(`${exportFileName.value}.json`, JSON.stringify(value));
+    console.log("save");
+  });
+
+  // used to import model and draw to canvas
+  importBtn.addEventListener("click", () => {
+    console.log(importFileName.files[0].name);
+    var fileName = importFileName.files[0].name;
+    var fileValue = fetch(`./models/${fileName}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((jsondata) => {
+        draw(gl, jsondata.vertices, program, gl.TRIANGLES);
+        console.log(jsondata.vertices);
+      });
   });
 }
 
