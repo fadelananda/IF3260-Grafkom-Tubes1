@@ -77,7 +77,7 @@ function createLine(start, end) {
 }
 
 
-function startProgram(gl, canvas, buffer, mouseClicked, start, end) {
+function startProgram(gl, canvas, buffer, mouseClicked, start, end, bufferline, lines) {
   // Konfigurasi
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -109,6 +109,15 @@ function startProgram(gl, canvas, buffer, mouseClicked, start, end) {
                     if (radio[i].value == 'line') {
                         end = [x,y];
                     }
+                    else if (radio[i].value == 'ubah-garis') {
+                      if (bufferline.length > 0) {
+                          if (bufferline[5] == 0) {
+                              lines[bufferline[0]] = createLine([x,y], [bufferline[3], bufferline[4]]);
+                          } else {
+                              lines[bufferline[0]] = createLine([bufferline[1], bufferline[2]], [x,y]);
+                          }
+                      }
+                    }
                 }
             }
             renderLine(gl, start, end, buffer);
@@ -127,6 +136,9 @@ function startProgram(gl, canvas, buffer, mouseClicked, start, end) {
                   start = [];
                   end = [];
               }
+              else if (radio[i].value == 'ubah-garis') {
+                bufferline= [];
+            } 
           }
       }
       renderLine(gl, start, end, buffer);
@@ -144,7 +156,24 @@ function startProgram(gl, canvas, buffer, mouseClicked, start, end) {
             if (radio[i].value == 'line') {
                 start = [x,y];
                 end = [x,y];
-            } 
+            }
+            else if (radio[i].value == 'ubah-garis') {
+              for (var i = 0; i < lines.length; ++i) {
+                for (var j = 0; j < lines[i].length; j+=2) {
+                    if (Math.sqrt((Math.pow(lines[i][j]-x, 2)+Math.pow(lines[i][j+1]-y, 2))) < 0.015) {
+                        var x_left = (lines[i][0] + lines[i][2])/2,
+                            y_left = (lines[i][1] + lines[i][3])/2,
+                            x_right = (lines[i][4] + lines[i][6])/2,
+                            y_right = (lines[i][5] + lines[i][7])/2;
+                        if (j > 3) {
+                            bufferline = [i, x_left, y_left, x_right, y_right, 1];
+                        } else {
+                            bufferline = [i, x_left, y_left, x_right, y_right, 0];
+                        }
+                      }
+                    }
+                  }
+          } 
         }
     }
     renderLine(gl, start, end, buffer);
@@ -159,5 +188,6 @@ var mouseClicked = false;
 var end = []
 var lines = [];
 var start = [];
+var bufferline =[]
 
-window.onload = startProgram(gl, canvas, buffer, mouseClicked, start, end);
+window.onload = startProgram(gl, canvas, buffer, mouseClicked, start, end, bufferline, lines);
