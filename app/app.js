@@ -87,7 +87,10 @@ function main() {
   });
 
   function keyDown(event) {
-    incColor(gl,String.fromCharCode(event.keyCode),fColorLocation);
+    if (document.activeElement.type != "text"){
+
+      incColor(gl,String.fromCharCode(event.keyCode),fColorLocation);
+    }
     draw(gl, points, program, gl.TRIANGLES)
   }
 }
