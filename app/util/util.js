@@ -1,3 +1,5 @@
+// import { modif_point } from "../app.js";
+
 const setUpCanvasBackground = (gl) => {
   /**
    * Set canvas color to some rgba value
@@ -37,14 +39,69 @@ const createProgram = (gl, vertexShader, fragmentShader) => {
   gl.deleteProgram(program);
 };
 
-const createGlBuffer = (gl, array, program) => {
+const getSquareVertices = (array, attr) => {
+  const point_idx = attr ? attr.point_idx : null;
+  const delta = attr ? attr.delta : null;
+
+  var vertices =  []
+
+  for (let i = 0; i < Math.floor(array.length/4); i++) {
+    // given, (x1, y1) (x2, y2)
+    // find the maximum length between x, y axis
+    const x1 = array[0+i*4];
+    const y1 = array[1+i*4];
+    const x2 = array[2+i*4];
+    const y2 = array[3+i*4];
+    
+    let mxLen = Math.max(Math.abs(x1-x2), Math.abs(y1-y2));
+
+    if(point_idx != null && delta != null ) {
+      if(i == point_idx) {
+        mxLen += delta;
+      }
+    }
+
+    const x_dir = (x2-x1) > 0 ? 1 : -1;
+    const y_dir = (y2-y1) > 0 ? 1 : -1;
+    const new_x2 = x1 + mxLen*x_dir;
+    const new_y2 = y1 + mxLen*y_dir;
+
+    // if(point_idx != null && delta != null) {
+    //   modif_point(point_idx, {
+    //     x1, y1, x2: new_x2, y2: new_y2
+    //   });
+    // }
+
+    var tri1 = [
+      x1, y1,
+      new_x2, y1,
+      x1, new_y2,
+    ]
+    
+    var tri2 = [
+      x1, new_y2,
+      new_x2, y1,
+      new_x2, new_y2
+    ]
+
+    if (!tri1.includes(undefined) && !tri2.includes(undefined)){
+      vertices = vertices.concat(tri1).concat(tri2)
+    }
+  }
+
+  return vertices
+  
+}
+
+const createGlBuffer = (gl, array, program, attr) => {
   /**
    * Create buffer and get attribute
    */
+  const vertices = getSquareVertices(array, attr)
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) throw new Error("failed to create buffer");
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
   var aPosition = gl.getAttribLocation(program, "a_position");
   if (aPosition < 0) throw new Error("failed to get attribute from program");
@@ -59,11 +116,11 @@ const createGlBuffer = (gl, array, program) => {
 
   gl.enableVertexAttribArray(aPosition);
 
-  return array.length / size;
+  return vertices.length / size;
 };
 
-const draw = (gl, array, program, type) => {
-  var n = createGlBuffer(gl, array, program);
+const draw = (gl, array, program, type, attr) => {
+  var n = createGlBuffer(gl, array, program, attr);
   if (n < 0) throw new Error("failed to initialize buffer");
 
   // gl.drawArrays(gl.LINE_STRIP, 0, n);
