@@ -9,6 +9,23 @@ import {
   saveModel,
 } from "./util/util.js";
 
+const garisBtn = document.querySelector("#garis-btn")
+const persegiBtn = document.querySelector("#persegi-btn")
+const persegiPanjangBtn = document.querySelector("#persegi-panjang-btn")
+const segitigaBtn = document.querySelector("#segitiga-btn")
+const polygonBtn = document.querySelector("#polygon-btn")
+
+const objects = {
+  triangles: {
+    name:"triangles",
+    vertices: []
+  },
+  persegi_panjang: {
+    name:"persegi_panjang",
+    vertices: []
+  }
+}
+
 function main() {
   const canvas = document.querySelector("canvas");
 
@@ -51,19 +68,30 @@ function main() {
   setUpCanvasBackground(gl);
   // draw(gl, vertices, program, gl.TRIANGLES);
 
-  canvas.addEventListener("mousedown", (event) => {
-    // console.log(getCoordinate(event, [], canvas));
-    // points.push(getCoordinate(event, points, canvas));
-    // var point = getCoordinate(event, points, canvas)
-    points.push(getCoordinate(event, points, canvas).x);
-    points.push(getCoordinate(event, points, canvas).y);
-    // draw(gl, points, program, gl.TRIANGLES);
-    drawTriangles(gl, points, program);
-  });
+  // canvas.addEventListener("mousedown", (event) => {
+  //   // console.log(getCoordinate(event, [], canvas));
+  //   // points.push(getCoordinate(event, points, canvas));
+  //   // var point = getCoordinate(event, points, canvas)
+  //   points.push(getCoordinate(event, points, canvas).x);
+  //   points.push(getCoordinate(event, points, canvas).y);
+  //   console.log(points);
+  //   draw(gl, points, program, gl.TRIANGLES);
+  //   // drawTriangles(gl, points, program);
+  // });
+
+  segitigaBtn.onclick = () => {
+      drawTriangleCanvas();
+  }
+
+  persegiPanjangBtn.onclick = () => {
+      drawPersegiPanjangCanvas();
+  }
 
   // used to save the model
   saveBtn.addEventListener("click", () => {
     console.log(exportFileName.value);
+    if (exportFileName.value === undefined)
+      exportFileName.value = "random.json"
     var value = {
       name: `${exportFileName.value}`,
       vertices: points,
@@ -92,6 +120,24 @@ function main() {
       incColor(gl,String.fromCharCode(event.keyCode),fColorLocation);
     }
     draw(gl, points, program, gl.TRIANGLES)
+  }
+
+  function drawTriangleCanvas() {
+    canvas.onmousedown = (event) => {
+      console.log("on draw triangle");
+      objects.triangles.vertices.push(getCoordinate(event, canvas).x);
+      objects.triangles.vertices.push(getCoordinate(event, canvas).y);
+      draw(gl, objects.triangles.vertices, program, gl.TRIANGLES, objects.triangles.name);
+    };
+  }
+
+  function drawPersegiPanjangCanvas() {
+    canvas.onmousedown = (event) => {
+      console.log("on draw persegi panjang");
+      objects.persegi_panjang.vertices.push(getCoordinate(event, canvas).x);
+      objects.persegi_panjang.vertices.push(getCoordinate(event, canvas).y);
+      draw(gl, objects.persegi_panjang.vertices, program, gl.TRIANGLES, objects.persegi_panjang.name);
+    };
   }
 }
 

@@ -17,7 +17,7 @@ const createShader = (gl, type, source) => {
   var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (success) return shader;
 
-  console.log(gl.getShaderInfoLog(shader));
+  // console.log(gl.getShaderInfoLog(shader));
   gl.deleteShader(shader);
 };
 
@@ -33,11 +33,11 @@ const createProgram = (gl, vertexShader, fragmentShader) => {
   var success = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (success) return program;
 
-  console.log(gl.getProgramInfoLog(program));
+  // console.log(gl.getProgramInfoLog(program));
   gl.deleteProgram(program);
 };
 
-const createGlBuffer = (gl, array, program) => {
+const createGlBuffer = (gl, array, program, name) => {
   /**
    * Create buffer and get attribute
    */
@@ -78,11 +78,14 @@ const createGlBuffer = (gl, array, program) => {
       vertices = vertices.concat(tri1).concat(tri2)
     }
   }
-  console.log(vertices)
+  // console.log(vertices)
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) throw new Error("failed to create buffer");
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  if(name==="triangles")
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
+  if(name==="persegi_panjang")
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
   var aPosition = gl.getAttribLocation(program, "a_position");
   if (aPosition < 0) throw new Error("failed to get attribute from program");
@@ -98,17 +101,24 @@ const createGlBuffer = (gl, array, program) => {
   gl.enableVertexAttribArray(aPosition);
 
 
-  return vertices.length/2;
+  // console.log("name");
+  // console.log(name);
+  if(name==="triangles")
+    return array.length/2;
+  if(name==="persegi_panjang")
+    return vertices.length/2;
   // array.length / size;
 };
 
-const draw = (gl, array, program, type) => {
-  var n = createGlBuffer(gl, array, program);
+const draw = (gl, array, program, type, name) => {
+  var n = createGlBuffer(gl, array, program, name);
   if (n < 0) throw new Error("failed to initialize buffer");
   // gl.drawArrays(gl.LINE_STRIP, 0, n);
   // gl.drawArrays(gl.LINE_LOOP, 0, n);
+  // if(name==="triangles")
   gl.drawArrays(type, 0, n);
-  // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+  // else
+  //   gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 };
 
 const incColor = (gl, type, fColor) => {
@@ -135,7 +145,7 @@ const incColor = (gl, type, fColor) => {
   }
 };
 
-const getCoordinate = (event, points, canvas) => {
+const getCoordinate = (event, canvas) => {
   var x = event.clientX,
     y = event.clientY;
 
