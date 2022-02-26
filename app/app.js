@@ -41,6 +41,8 @@ function main() {
 
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
   const points = [];
+  
+  var currColor = [0,1,0,1]
   document.onkeydown = keyDown;
 
   if (!gl) return;
@@ -66,7 +68,7 @@ function main() {
   //   -0.5, -0.5, -0.5, +0.5, 0.0, +0.5, 0.0, 0.0, 0.0, -0.5, +0.5, -0.5,
   // ];
 
-  gl.uniform4f(fColorLocation, 1, 0, 0, 1);
+  gl.uniform4f(fColorLocation, 0, 1, 0, 1);
   setUpCanvasBackground(gl);
   // draw(gl, vertices, program, gl.TRIANGLES);
 
@@ -122,9 +124,34 @@ function main() {
 
   function keyDown(event) {
     if (document.activeElement.type != "text") {
-      incColor(gl, String.fromCharCode(event.keyCode), fColorLocation);
+      currColor = incColor(gl, String.fromCharCode(event.keyCode), fColorLocation, currColor);
     }
-    draw(gl, points, program, gl.TRIANGLES);
+    drawAll()
+  }
+
+  function drawAll(){
+    // add garis dan persegi here
+    draw(
+      gl,
+      objects.triangles.vertices,
+      program,
+      gl.TRIANGLES,
+      objects.triangles.name
+    );
+    draw(
+      gl,
+      objects.persegi_panjang.vertices,
+      program,
+      gl.TRIANGLES,
+      objects.persegi_panjang.name
+    );
+    draw(
+      gl,
+      objects.poligon.vertices,
+      program,
+      gl.TRIANGLE_STRIP,
+      objects.poligon.name
+    );
   }
 
   function drawTriangleCanvas() {

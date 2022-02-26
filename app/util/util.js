@@ -61,29 +61,8 @@ const createGlBuffer = (gl, array, program, name) => {
   //   }
   // }
   //gambar persegi panjang
-  for (let i = 0; i < array.length / 4; i++) {
-    // (1,1) (2,2)
-    var tri1 = [
-      array[0 + i * 4],
-      array[1 + i * 4],
-      array[2 + i * 4],
-      array[3 + i * 4],
-      array[0 + i * 4],
-      array[3 + i * 4],
-    ];
-
-    var tri2 = [
-      array[0 + i * 4],
-      array[1 + i * 4],
-      array[2 + i * 4],
-      array[3 + i * 4],
-      array[2 + i * 4],
-      array[1 + i * 4],
-    ];
-    if (!tri1.includes(undefined) && !tri2.includes(undefined)) {
-      vertices = vertices.concat(tri1).concat(tri2);
-    }
-  }
+  vertices = gambarPersegiPanjang(array, vertices)
+  console.log(vertices);
   // console.log(vertices)
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) throw new Error("failed to create buffer");
@@ -113,6 +92,35 @@ const createGlBuffer = (gl, array, program, name) => {
   // array.length / size;
 };
 
+function gambarPersegiPanjang(array, vertices) {
+  for (let i = 0; i < array.length / 4; i++) {
+    // (1,1) (2,2)
+    var tri1 = [
+      array[0 + i * 4],
+      array[1 + i * 4],
+      array[2 + i * 4],
+      array[3 + i * 4],
+      array[0 + i * 4],
+      array[3 + i * 4],
+    ];
+
+    var tri2 = [
+      array[0 + i * 4],
+      array[1 + i * 4],
+      array[2 + i * 4],
+      array[3 + i * 4],
+      array[2 + i * 4],
+      array[1 + i * 4],
+    ];
+    if (!tri1.includes(undefined) && !tri2.includes(undefined)) {
+      vertices = vertices.concat(tri1).concat(tri2);
+    }
+
+  }
+  return vertices
+  
+}
+
 const draw = (gl, array, program, type, name) => {
   var n = createGlBuffer(gl, array, program, name);
   if (n < 0) throw new Error("failed to initialize buffer");
@@ -124,28 +132,47 @@ const draw = (gl, array, program, type, name) => {
   //   gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 };
 
-const incColor = (gl, type, fColor) => {
+const incColor = (gl, type, fColor, currColor) => {
   switch (type) {
     case "R":
-      gl.uniform4f(fColor, 1, 0, 0, 1);
+      currColor[0] < 1 ? currColor[0]  = currColor[0]+0.1 :
       console.log("r");
       break;
+    case "T":
+      currColor[0] > 0 ? currColor[0] = currColor[0]-0.1:
+      console.log("t");
+      break;
     case "G":
-      gl.uniform4f(fColor, 0, 1, 0, 1);
+      currColor[1] < 1 ? currColor[1] = currColor[1]+0.1 :
       console.log("g");
       break;
+    case "H":
+      currColor[1] > 0 ? currColor[1] = currColor[1]-0.1:
+      console.log("h");
+      break;
     case "B":
-      gl.uniform4f(fColor, 0, 0, 1, 1);
+      currColor[2] < 1 ? currColor[2] = currColor[2]+0.1:
       console.log("b");
       break;
+    case "N":
+      currColor[2] > 0 ? currColor[2] = currColor[2]-0.1:
+      console.log("n");
+      break;
     case "A":
-      gl.uniform4f(fColor, 0, 0, 0, 1);
+      currColor[3] < 1 ? currColor[3] = currColor[3]+0.1:
+      console.log("a");
+      break;
+    case "S":
+      currColor[3] > 0 ? currColor[3] = currColor[3]-0.1:
       console.log("a");
       break;
 
     default:
       break;
   }
+  
+  gl.uniform4f(fColor, currColor[0], currColor[1], currColor[2], currColor[3]);
+  return currColor
 };
 
 const getCoordinate = (event, canvas) => {
