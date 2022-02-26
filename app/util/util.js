@@ -135,36 +135,28 @@ const draw = (gl, array, program, type, name) => {
 const incColor = (gl, type, fColor, currColor) => {
   switch (type) {
     case "R":
-      currColor[0] < 1 ? currColor[0]  = currColor[0]+0.1 :
-      console.log("r");
+      if (currColor[0] < 1) currColor[0]  = currColor[0]+0.1
       break;
     case "T":
-      currColor[0] > 0 ? currColor[0] = currColor[0]-0.1:
-      console.log("t");
+      if (currColor[0] > 0) currColor[0] = currColor[0]-0.1
       break;
     case "G":
-      currColor[1] < 1 ? currColor[1] = currColor[1]+0.1 :
-      console.log("g");
+      if (currColor[1] < 1) currColor[1]  = currColor[1]+0.1
       break;
     case "H":
-      currColor[1] > 0 ? currColor[1] = currColor[1]-0.1:
-      console.log("h");
+      if (currColor[1] > 0) currColor[1] = currColor[1]-0.1
       break;
     case "B":
-      currColor[2] < 1 ? currColor[2] = currColor[2]+0.1:
-      console.log("b");
+      if (currColor[2] < 1) currColor[2]  = currColor[2]+0.1
       break;
     case "N":
-      currColor[2] > 0 ? currColor[2] = currColor[2]-0.1:
-      console.log("n");
+      if (currColor[2] > 0) currColor[2] = currColor[2]-0.1
       break;
     case "A":
-      currColor[3] < 1 ? currColor[3] = currColor[3]+0.1:
-      console.log("a");
+      if (currColor[3] < 1) currColor[3]  = currColor[3]+0.1
       break;
     case "S":
-      currColor[3] > 0 ? currColor[3] = currColor[3]-0.1:
-      console.log("a");
+      if (currColor[3] > 0) currColor[3] = currColor[3]-0.1
       break;
 
     default:

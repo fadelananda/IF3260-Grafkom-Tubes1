@@ -14,6 +14,14 @@ const persegiBtn = document.querySelector("#persegi-btn");
 const persegiPanjangBtn = document.querySelector("#persegi-panjang-btn");
 const segitigaBtn = document.querySelector("#segitiga-btn");
 const polygonBtn = document.querySelector("#polygon-btn");
+const irBtn = document.querySelector("#ir-btn");
+const igBtn = document.querySelector("#ig-btn");
+const ibBtn = document.querySelector("#ib-btn");
+const iaBtn = document.querySelector("#ia-btn");
+const drBtn = document.querySelector("#dr-btn");
+const dgBtn = document.querySelector("#dg-btn");
+const dbBtn = document.querySelector("#db-btn");
+const daBtn = document.querySelector("#da-btn");
 
 const objects = {
   triangles: {
@@ -129,6 +137,45 @@ function main() {
     drawAll()
   }
 
+  irBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "R", fColorLocation, currColor);
+    drawAll()
+  })
+
+  igBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "G", fColorLocation, currColor);
+    drawAll()
+  })
+
+  ibBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "B", fColorLocation, currColor);
+    drawAll()
+  })
+
+  iaBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "A", fColorLocation, currColor);
+    drawAll()
+  })
+
+  drBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "T", fColorLocation, currColor);
+    drawAll()
+  })
+
+  dgBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "H", fColorLocation, currColor);
+    drawAll()
+  })
+
+  dbBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "N", fColorLocation, currColor);
+    drawAll()
+  })
+
+  daBtn.addEventListener("click", () =>{
+    currColor = incColor(gl, "S", fColorLocation, currColor);
+    drawAll()
+  })
   function drawAll(){
     // add garis dan persegi here
     draw(
