@@ -41,7 +41,7 @@ const createGlBuffer = (gl, array, program, name) => {
   /**
    * Create buffer and get attribute
    */
-  var vertices = []
+  var vertices = [];
   // gambar poligon
   // for (let i = 0; i < array.length/8; i++) {
   //   var tri1 = [
@@ -49,7 +49,7 @@ const createGlBuffer = (gl, array, program, name) => {
   //     array[4+i*8], array[5+i*8],
   //     array[2+i*8], array[3+i*8],
   //   ]
-  
+
   //   var tri2 = [
   //     array[6+i*8], array[7+i*8],
   //     array[2+i*8], array[3+i*8],
@@ -61,30 +61,36 @@ const createGlBuffer = (gl, array, program, name) => {
   //   }
   // }
   //gambar persegi panjang
-  for (let i = 0; i < array.length/4; i++) {
+  for (let i = 0; i < array.length / 4; i++) {
     // (1,1) (2,2)
     var tri1 = [
-      array[0+i*4], array[1+i*4],
-      array[2+i*4], array[3+i*4],
-      array[0+i*4], array[3+i*4],
-    ]
-  
+      array[0 + i * 4],
+      array[1 + i * 4],
+      array[2 + i * 4],
+      array[3 + i * 4],
+      array[0 + i * 4],
+      array[3 + i * 4],
+    ];
+
     var tri2 = [
-      array[0+i*4], array[1+i*4],
-      array[2+i*4], array[3+i*4],
-      array[2+i*4], array[1+i*4],
-    ]
-    if (!tri1.includes(undefined) && !tri2.includes(undefined)){
-      vertices = vertices.concat(tri1).concat(tri2)
+      array[0 + i * 4],
+      array[1 + i * 4],
+      array[2 + i * 4],
+      array[3 + i * 4],
+      array[2 + i * 4],
+      array[1 + i * 4],
+    ];
+    if (!tri1.includes(undefined) && !tri2.includes(undefined)) {
+      vertices = vertices.concat(tri1).concat(tri2);
     }
   }
   // console.log(vertices)
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) throw new Error("failed to create buffer");
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  if(name==="triangles")
+  if (name === "triangles" || name === "poligon")
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
-  if(name==="persegi_panjang")
+  if (name === "persegi_panjang")
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
   var aPosition = gl.getAttribLocation(program, "a_position");
@@ -100,13 +106,10 @@ const createGlBuffer = (gl, array, program, name) => {
 
   gl.enableVertexAttribArray(aPosition);
 
-
   // console.log("name");
   // console.log(name);
-  if(name==="triangles")
-    return array.length/2;
-  if(name==="persegi_panjang")
-    return vertices.length/2;
+  if (name === "triangles" || name === "poligon") return array.length / 2;
+  if (name === "persegi_panjang") return vertices.length / 2;
   // array.length / size;
 };
 
@@ -139,7 +142,7 @@ const incColor = (gl, type, fColor) => {
       gl.uniform4f(fColor, 0, 0, 0, 1);
       console.log("a");
       break;
-  
+
     default:
       break;
   }
@@ -189,5 +192,5 @@ export {
   getCoordinate,
   createGlBuffer,
   saveModel,
-  incColor
+  incColor,
 };

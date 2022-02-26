@@ -9,22 +9,26 @@ import {
   saveModel,
 } from "./util/util.js";
 
-const garisBtn = document.querySelector("#garis-btn")
-const persegiBtn = document.querySelector("#persegi-btn")
-const persegiPanjangBtn = document.querySelector("#persegi-panjang-btn")
-const segitigaBtn = document.querySelector("#segitiga-btn")
-const polygonBtn = document.querySelector("#polygon-btn")
+const garisBtn = document.querySelector("#garis-btn");
+const persegiBtn = document.querySelector("#persegi-btn");
+const persegiPanjangBtn = document.querySelector("#persegi-panjang-btn");
+const segitigaBtn = document.querySelector("#segitiga-btn");
+const polygonBtn = document.querySelector("#polygon-btn");
 
 const objects = {
   triangles: {
-    name:"triangles",
-    vertices: []
+    name: "triangles",
+    vertices: [],
   },
   persegi_panjang: {
-    name:"persegi_panjang",
-    vertices: []
-  }
-}
+    name: "persegi_panjang",
+    vertices: [],
+  },
+  poligon: {
+    name: "poligon",
+    vertices: [],
+  },
+};
 
 function main() {
   const canvas = document.querySelector("canvas");
@@ -44,8 +48,6 @@ function main() {
   const vertexShaderSource = document.querySelector("#vertex-shader").text;
   const fragmentShaderSource = document.querySelector("#fragment-shader").text;
 
-  
-
   // create GLSL shaders, upload the GLSL source, compile the shaders
   var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   var fragmentShader = createShader(
@@ -56,15 +58,15 @@ function main() {
 
   // Link the two shaders into a program
   var program = createProgram(gl, vertexShader, fragmentShader);
-  
+
   var fColorLocation = gl.getUniformLocation(program, "fColor");
   gl.useProgram(program);
-  
+
   // var vertices = [
   //   -0.5, -0.5, -0.5, +0.5, 0.0, +0.5, 0.0, 0.0, 0.0, -0.5, +0.5, -0.5,
   // ];
-  
-  gl.uniform4f(fColorLocation, 1,0,0,1)
+
+  gl.uniform4f(fColorLocation, 1, 0, 0, 1);
   setUpCanvasBackground(gl);
   // draw(gl, vertices, program, gl.TRIANGLES);
 
@@ -80,18 +82,22 @@ function main() {
   // });
 
   segitigaBtn.onclick = () => {
-      drawTriangleCanvas();
-  }
+    drawTriangleCanvas();
+  };
 
   persegiPanjangBtn.onclick = () => {
-      drawPersegiPanjangCanvas();
-  }
+    drawPersegiPanjangCanvas();
+  };
+
+  polygonBtn.onclick = () => {
+    drawPoligonCanvas();
+  };
 
   // used to save the model
   saveBtn.addEventListener("click", () => {
     console.log(exportFileName.value);
     if (exportFileName.value === undefined)
-      exportFileName.value = "random.json"
+      exportFileName.value = "random.json";
     var value = {
       name: `${exportFileName.value}`,
       vertices: points,
@@ -115,11 +121,10 @@ function main() {
   });
 
   function keyDown(event) {
-    if (document.activeElement.type != "text"){
-
-      incColor(gl,String.fromCharCode(event.keyCode),fColorLocation);
+    if (document.activeElement.type != "text") {
+      incColor(gl, String.fromCharCode(event.keyCode), fColorLocation);
     }
-    draw(gl, points, program, gl.TRIANGLES)
+    draw(gl, points, program, gl.TRIANGLES);
   }
 
   function drawTriangleCanvas() {
@@ -127,7 +132,13 @@ function main() {
       console.log("on draw triangle");
       objects.triangles.vertices.push(getCoordinate(event, canvas).x);
       objects.triangles.vertices.push(getCoordinate(event, canvas).y);
-      draw(gl, objects.triangles.vertices, program, gl.TRIANGLES, objects.triangles.name);
+      draw(
+        gl,
+        objects.triangles.vertices,
+        program,
+        gl.TRIANGLES,
+        objects.triangles.name
+      );
     };
   }
 
@@ -136,7 +147,28 @@ function main() {
       console.log("on draw persegi panjang");
       objects.persegi_panjang.vertices.push(getCoordinate(event, canvas).x);
       objects.persegi_panjang.vertices.push(getCoordinate(event, canvas).y);
-      draw(gl, objects.persegi_panjang.vertices, program, gl.TRIANGLES, objects.persegi_panjang.name);
+      draw(
+        gl,
+        objects.persegi_panjang.vertices,
+        program,
+        gl.TRIANGLES,
+        objects.persegi_panjang.name
+      );
+    };
+  }
+
+  function drawPoligonCanvas() {
+    canvas.onmousedown = (event) => {
+      console.log("on draw poligon canvas");
+      objects.poligon.vertices.push(getCoordinate(event, canvas).x);
+      objects.poligon.vertices.push(getCoordinate(event, canvas).y);
+      draw(
+        gl,
+        objects.poligon.vertices,
+        program,
+        gl.TRIANGLE_STRIP,
+        objects.poligon.name
+      );
     };
   }
 }
