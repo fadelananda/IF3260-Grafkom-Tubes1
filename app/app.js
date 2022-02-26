@@ -49,6 +49,13 @@ function main() {
 
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
   const points = [];
+  var buffer;
+  var colorbuffer;
+  var mouseClicked = false;
+  var end = []
+  var lines = [];
+  var start = [];
+  var bufferline =[]
 
   var currColor = [0, 1, 0, 1];
   document.onkeydown = keyDown;
@@ -71,6 +78,7 @@ function main() {
 
   var fColorLocation = gl.getUniformLocation(program, "fColor");
   gl.useProgram(program);
+  gl.program = program;
 
   gl.uniform4f(fColorLocation, 0, 1, 0, 1);
   setUpCanvasBackground(gl);
@@ -86,6 +94,10 @@ function main() {
   polygonBtn.onclick = () => {
     drawPoligonCanvas();
   };
+
+  garisBtn.onclick = () => {
+    drawLineCanvas();
+  }
 
   // used to save the model
   saveBtn.onclick = () => {
@@ -250,6 +262,77 @@ function main() {
         objects.poligon.name
       );
     };
+  }
+  function drawLineCanvas() {
+    buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, 8 * 200000, gl.STATIC_DRAW);
+    var a_position = gl.getAttribLocation(program, "a_position");
+    gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_position);
+
+    function createLine(start, end) {
+      const width = 0.003;
+      const deg = Math.atan2(end[1]-start[1], end[0]-start[0]) * 180 / Math.PI;
+      var p1 = rotation(start[0], start[1], start[0], start[1]-width, -deg);
+      var p2 = rotation(start[0], start[1], start[0], start[1]+width, -deg);
+      var p3 = rotation(end[0], end[1], end[0], end[1]+width, -deg);
+      var p4 = rotation(end[0], end[1], end[0], end[1]-width, -deg);
+      return [
+          p1[0], p1[1],
+          p2[0], p2[1],
+          p3[0], p3[1], 
+          p4[0], p4[1],
+      ];
+    }
+    function renderLine(gl, start, end, buffer) {
+      var renderedLine = [];
+      if (start.length != 0) {
+          createLine(start,end).forEach(el => renderedLine.push(el));
+      }
+    
+      lines.forEach((el) => {
+          el.forEach((el2) => renderedLine.push(el2));
+      });
+    
+      gl.clear(gl.DEPTH_BUFFER_BIT);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(renderedLine));
+      for (var i = 0; i < renderedLine.length / 8; ++i) gl.drawArrays(gl.TRIANGLE_STRIP, 4 * i, 4);
+    }
+    function rotation(ax, ay, bx, by, angle) {
+      var rad = (Math.PI / 180) * angle,
+          cos = Math.cos(rad),
+          sin = Math.sin(rad),
+          run = bx - ax,
+          rise = by - ay,
+          cx = (cos * run) + (sin * rise) + ax,
+          cy = (cos * rise) - (sin * run) + ay;
+      return [cx, cy];
+    }
+    canvas.addEventListener('mousemove', (e) => {
+      if (mouseClicked) {
+          var x = -1 + 2*e.offsetX/canvas.width;
+          var y = -1 + 2*(canvas.height - e.offsetY)/canvas.height;
+          end = [x,y];
+          renderLine(gl, start, end, buffer);
+      }
+      });
+    canvas.addEventListener('mouseup', () => {
+      mouseClicked = false;
+      lines.push(createLine(start, end));
+      start = [];
+      end = []; 
+      renderLine(gl, start, end, buffer);
+    });
+    canvas.onmousedown = (e) => {
+    mouseClicked = true;
+    var x = -1 + 2*e.offsetX/canvas.width;
+    var y = -1 + 2*(canvas.height - e.offsetY)/canvas.height;
+    start = [x,y];
+    end = [x,y];
+    renderLine(gl, start, end, buffer);
+  };
   }
 }
 
