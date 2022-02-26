@@ -49,8 +49,8 @@ function main() {
 
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
   const points = [];
-  
-  var currColor = [0,1,0,1]
+
+  var currColor = [0, 1, 0, 1];
   document.onkeydown = keyDown;
 
   if (!gl) return;
@@ -72,24 +72,8 @@ function main() {
   var fColorLocation = gl.getUniformLocation(program, "fColor");
   gl.useProgram(program);
 
-  // var vertices = [
-  //   -0.5, -0.5, -0.5, +0.5, 0.0, +0.5, 0.0, 0.0, 0.0, -0.5, +0.5, -0.5,
-  // ];
-
   gl.uniform4f(fColorLocation, 0, 1, 0, 1);
   setUpCanvasBackground(gl);
-  // draw(gl, vertices, program, gl.TRIANGLES);
-
-  // canvas.addEventListener("mousedown", (event) => {
-  //   // console.log(getCoordinate(event, [], canvas));
-  //   // points.push(getCoordinate(event, points, canvas));
-  //   // var point = getCoordinate(event, points, canvas)
-  //   points.push(getCoordinate(event, points, canvas).x);
-  //   points.push(getCoordinate(event, points, canvas).y);
-  //   console.log(points);
-  //   draw(gl, points, program, gl.TRIANGLES);
-  //   // drawTriangles(gl, points, program);
-  // });
 
   segitigaBtn.onclick = () => {
     drawTriangleCanvas();
@@ -104,20 +88,18 @@ function main() {
   };
 
   // used to save the model
-  saveBtn.addEventListener("click", () => {
-    console.log(exportFileName.value);
-    if (exportFileName.value === undefined)
-      exportFileName.value = "random.json";
+  saveBtn.onclick = () => {
+    if (exportFileName.value === undefined || exportFileName.value === "")
+      exportFileName.value = "model";
     var value = {
       name: `${exportFileName.value}`,
-      vertices: points,
+      objects: objects,
     };
     saveModel(`${exportFileName.value}.json`, JSON.stringify(value));
-    console.log("save");
-  });
+  };
 
   // used to import model and draw to canvas
-  importBtn.addEventListener("click", () => {
+  importBtn.onclick = () => {
     console.log(importFileName.files[0].name);
     var fileName = importFileName.files[0].name;
     var fileValue = fetch(`./models/${fileName}`)
@@ -125,58 +107,82 @@ function main() {
         return response.json();
       })
       .then((jsondata) => {
-        draw(gl, jsondata.vertices, program, gl.TRIANGLES);
-        console.log(jsondata.vertices);
+        draw(
+          gl,
+          jsondata.objects.triangles.vertices,
+          program,
+          gl.TRIANGLES,
+          jsondata.objects.triangles.name
+        );
+        draw(
+          gl,
+          jsondata.objects.persegi_panjang.vertices,
+          program,
+          gl.TRIANGLES,
+          jsondata.objects.persegi_panjang.name
+        );
+        draw(
+          gl,
+          jsondata.objects.poligon.vertices,
+          program,
+          gl.TRIANGLE_STRIP,
+          jsondata.objects.poligon.name
+        );
       });
-  });
+  };
 
   function keyDown(event) {
     if (document.activeElement.type != "text") {
-      currColor = incColor(gl, String.fromCharCode(event.keyCode), fColorLocation, currColor);
+      currColor = incColor(
+        gl,
+        String.fromCharCode(event.keyCode),
+        fColorLocation,
+        currColor
+      );
     }
-    drawAll()
+    drawAll();
   }
 
-  irBtn.addEventListener("click", () =>{
+  irBtn.addEventListener("click", () => {
     currColor = incColor(gl, "R", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  igBtn.addEventListener("click", () =>{
+  igBtn.addEventListener("click", () => {
     currColor = incColor(gl, "G", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  ibBtn.addEventListener("click", () =>{
+  ibBtn.addEventListener("click", () => {
     currColor = incColor(gl, "B", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  iaBtn.addEventListener("click", () =>{
+  iaBtn.addEventListener("click", () => {
     currColor = incColor(gl, "A", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  drBtn.addEventListener("click", () =>{
+  drBtn.addEventListener("click", () => {
     currColor = incColor(gl, "T", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  dgBtn.addEventListener("click", () =>{
+  dgBtn.addEventListener("click", () => {
     currColor = incColor(gl, "H", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  dbBtn.addEventListener("click", () =>{
+  dbBtn.addEventListener("click", () => {
     currColor = incColor(gl, "N", fColorLocation, currColor);
-    drawAll()
-  })
+    drawAll();
+  });
 
-  daBtn.addEventListener("click", () =>{
+  daBtn.addEventListener("click", () => {
     currColor = incColor(gl, "S", fColorLocation, currColor);
-    drawAll()
-  })
-  function drawAll(){
+    drawAll();
+  });
+  function drawAll() {
     // add garis dan persegi here
     draw(
       gl,
