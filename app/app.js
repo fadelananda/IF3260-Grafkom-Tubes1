@@ -28,6 +28,10 @@ const objects = {
     name: "triangles",
     vertices: [],
   },
+  persegi: {
+    name: "persegi",
+    vertices: [],
+  },
   persegi_panjang: {
     name: "persegi_panjang",
     vertices: [],
@@ -46,6 +50,23 @@ function main() {
 
   const exportFileName = document.querySelector("#export-filename");
   const importFileName = document.querySelector("#import-filename");
+  const squareLen = document.querySelector("#input-square-len")
+  const squareActionEl = document.getElementsByName("square_action");
+  let squareAction = document.querySelector('input[name="square_action"]:checked').value;
+
+  squareActionEl[0].addEventListener('change', function() {
+    if(squareActionEl[0].checked) {
+      squareAction = squareActionEl[0].value;
+      drawPersegiCanvas();
+    }
+  })
+
+  squareActionEl[1].addEventListener('change', function() {
+    if(squareActionEl[1].checked) {
+      squareAction = squareActionEl[1].value;
+      drawPersegiCanvas();
+    }
+  })
 
   const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
   const points = [];
@@ -56,6 +77,12 @@ function main() {
   var lines = [];
   var start = [];
   var bufferline =[]
+  let squareAttr = {
+    len: 0,
+    point_idx: 0,
+    x_dir: 1,
+    y_dir: 1,
+  }
 
   var currColor = [0, 1, 0, 1];
   document.onkeydown = keyDown;
@@ -84,21 +111,29 @@ function main() {
   setUpCanvasBackground(gl);
 
   segitigaBtn.onclick = () => {
+    hideSquareUtils();
     drawTriangleCanvas();
   };
 
   persegiPanjangBtn.onclick = () => {
+    hideSquareUtils();
     drawPersegiPanjangCanvas();
   };
 
   polygonBtn.onclick = () => {
+    hideSquareUtils();
     drawPoligonCanvas();
   };
 
   garisBtn.onclick = () => {
+    hideSquareUtils();
     drawLineCanvas();
   }
 
+  persegiBtn.onclick = () => {
+    showSquareUtils();
+    drawPersegiCanvas();
+  }
   // used to save the model
   saveBtn.onclick = () => {
     if (exportFileName.value === undefined || exportFileName.value === "")
@@ -217,6 +252,13 @@ function main() {
       gl.TRIANGLE_STRIP,
       objects.poligon.name
     );
+    draw(
+      gl,
+      objects.persegi.vertices,
+      program,
+      gl.TRIANGLES,
+      objects.persegi.name,
+    );
   }
 
   function drawTriangleCanvas() {
@@ -263,6 +305,158 @@ function main() {
       );
     };
   }
+
+  function drawPersegiCanvas() {
+    console.log(squareAction);
+    if(squareAction === "Draw Persegi") {
+      canvas.onmousedown = (event) => {
+        console.log("on draw persegi canvas");
+        objects.persegi.vertices.push(getCoordinate(event, canvas).x);
+        objects.persegi.vertices.push(getCoordinate(event, canvas).y);
+        if(objects.persegi.vertices.length%4 == 0)
+          setInitialPersegiCoordinate();
+        draw(
+          gl,
+          objects.persegi.vertices,
+          program,
+          gl.TRIANGLES,
+          objects.persegi.name
+        );
+        // checkSquare(getCoordinate(event, canvas));
+      }
+    } else {
+      canvas.onmousedown = function(event) {
+        // var squareLen = document.querySelector("#input-square-len")
+        // var new_square_len = squareLen.cloneNode(true);
+        // squareLen.parentNode.replaceChild(new_square_len, squareLen);
+        const { x, y } = getCoordinate(event, canvas);
+        const currPoint = {
+          x, y
+        }
+        const currIdxSquare = getNearestSquareFromCurrentPoint(currPoint);
+        // console.log(currIdxSquare);
+        if(currIdxSquare != null) {
+          const x1 = objects.persegi.vertices[0+currIdxSquare*4];
+          const y1 = objects.persegi.vertices[1+currIdxSquare*4];
+          const x2 = objects.persegi.vertices[2+currIdxSquare*4];
+          const y2 = objects.persegi.vertices[3+currIdxSquare*4];
+          const x_dir = (x2-x1) > 0 ? 1 : -1;
+          const y_dir = (y2-y1) > 0 ? 1 : -1;
+          const currLen = Math.max(Math.abs(x1-x2), Math.abs(y1-y2));
+
+          squareLen.disabled = false;
+          squareLen.value = currLen;
+
+          const resizeSquare = function(event) {
+            console.log('tes');
+            console.log(currIdxSquare);
+            const x1 = objects.persegi.vertices[0+currIdxSquare*4];
+            const y1 = objects.persegi.vertices[1+currIdxSquare*4];
+            const inputLen =  parseFloat(event.target.value);
+
+            const new_x2 = x1 + (inputLen)*x_dir;
+            const new_y2 = y1 + (inputLen)*y_dir;
+            
+            let beforeCurrSquare = objects.persegi.vertices.slice(0, 0+(currIdxSquare)*4);
+            let afterCurrSquare = objects.persegi.vertices.slice(0+(currIdxSquare+1)*4)
+            let updatedPoints = [x1, y1, new_x2, new_y2];
+            
+            console.log(objects.persegi.vertices);
+            console.log(beforeCurrSquare);
+            console.log(updatedPoints);
+            console.log(afterCurrSquare);
+            
+            objects.persegi.vertices = beforeCurrSquare.concat(updatedPoints).concat(afterCurrSquare);
+            
+            console.log("After concat:", objects.persegi.vertices)
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.depthFunc(gl.LEQUAL);
+            gl.enable(gl.DEPTH_TEST);
+            drawAll();
+          }
+          squareLen.addEventListener("input", resizeSquare, true);
+          const changeSquare = document.querySelector("#change_square");
+
+          changeSquare.addEventListener("click", function(){
+            squareLen.removeEventListener("input", resizeSquare, true);
+          });
+        }
+      }
+    }
+
+    function setInitialPersegiCoordinate() {
+      const last_idx = objects.persegi.vertices.length/4-1;
+      console.log(objects.persegi.vertices);
+      const x1 = objects.persegi.vertices[0+last_idx*4];
+      const y1 = objects.persegi.vertices[1+last_idx*4];
+      const x2 = objects.persegi.vertices[2+last_idx*4];
+      const y2 = objects.persegi.vertices[3+last_idx*4];
+      
+      const x_dir = (x2-x1) > 0 ? 1 : -1;
+      const y_dir = (y2-y1) > 0 ? 1 : -1;
+      
+      let mxLen = Math.max(Math.abs(x1-x2), Math.abs(y1-y2));
+      const new_x2 = x1 + mxLen*x_dir;
+      const new_y2 = y1 + mxLen*y_dir;
+
+      let beforeEnd = objects.persegi.vertices.slice(0, 0+(last_idx)*4);
+      let updatedEnd = [x1, y1, new_x2, new_y2];
+
+      objects.persegi.vertices = beforeEnd.concat(updatedEnd);
+    }
+  }
+
+  const getNearestSquareFromCurrentPoint = (givenCoordinate) => {
+    const x_cor = givenCoordinate.x;
+    const y_cor = givenCoordinate.y;
+    const minDist = {val : 1000000007, idx_square: null };
+
+    const computeDist = (x1, y1, x2, y2) => {
+      const min_X = Math.min(Math.abs(x1-x_cor), Math.abs(x2-x_cor));
+      const min_Y = Math.min(Math.abs(y1-y_cor), Math.abs(y2-y_cor));
+
+      return Math.sqrt(min_X*min_X + min_Y*min_Y);
+    }
+
+    for (let i = 0; i < Math.floor(objects.persegi.vertices.length/4); i++) {
+      // given, (x1, y1) (x2, y2)
+      const x1 = objects.persegi.vertices[0+i*4];
+      const y1 = objects.persegi.vertices[1+i*4];
+      const x2 = objects.persegi.vertices[2+i*4];
+      const y2 = objects.persegi.vertices[3+i*4];
+      
+      const mxLen = Math.max(Math.abs(x1-x2), Math.abs(y1-y2));
+      const x_dir = (x2-x1) >= 0 ? 1 : -1;
+      const y_dir = (y2-y1) >= 0 ? 1 : -1;
+      
+      const new_x2 = x1 + mxLen*x_dir;
+      const new_y2 = y1 + mxLen*y_dir;
+      
+
+      const currDist = computeDist(x1, y1, new_x2, new_y2);
+
+      if(currDist < minDist.val) {
+        minDist.val = currDist;
+        minDist.idx_square = i;
+      }
+    }
+    return minDist.idx_square;
+  }
+
+
+  function showSquareUtils() {
+    const squareUtils = document.querySelector("#square-utils");
+    squareUtils.style.display = 'block';
+  }
+
+  
+  function hideSquareUtils() {
+    const squareUtils = document.querySelector("#square-utils");
+    squareUtils.style.display = 'none';
+  }
+
   function drawLineCanvas() {
     buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
