@@ -37,39 +37,24 @@ const createProgram = (gl, vertexShader, fragmentShader) => {
   gl.deleteProgram(program);
 };
 
-const createGlBuffer = (gl, array, program, name) => {
+const createGlBuffer = (gl, array, program, name, attr) => {
   /**
    * Create buffer and get attribute
    */
   var vertices = [];
-  // gambar poligon
-  // for (let i = 0; i < array.length/8; i++) {
-  //   var tri1 = [
-  //     array[6+i*8], array[7+i*8],
-  //     array[4+i*8], array[5+i*8],
-  //     array[2+i*8], array[3+i*8],
-  //   ]
-
-  //   var tri2 = [
-  //     array[6+i*8], array[7+i*8],
-  //     array[2+i*8], array[3+i*8],
-  //     array[0+i*8], array[1+i*8],
-  //   ]
-  //   if (!tri1.includes(undefined) && !tri2.includes(undefined)){
-  //     vertices = vertices.concat(tri1).concat(tri2)
-  //     console.log("drawn");
-  //   }
-  // }
   //gambar persegi panjang
   vertices = gambarPersegiPanjang(array, vertices)
   console.log(vertices);
   // console.log(vertices)
+  if (name === "persegi") {
+    vertices = getPersegiVertices(array);
+  }
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) throw new Error("failed to create buffer");
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   if (name === "triangles" || name === "poligon")
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
-  if (name === "persegi_panjang")
+  if (name === "persegi_panjang" || name === "persegi")
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
   var aPosition = gl.getAttribLocation(program, "a_position");
@@ -88,7 +73,7 @@ const createGlBuffer = (gl, array, program, name) => {
   // console.log("name");
   // console.log(name);
   if (name === "triangles" || name === "poligon") return array.length / 2;
-  if (name === "persegi_panjang") return vertices.length / 2;
+  if (name === "persegi_panjang" || name === "persegi") return vertices.length / 2;
   // array.length / size;
 };
 
@@ -121,15 +106,41 @@ function gambarPersegiPanjang(array, vertices) {
   
 }
 
+function getPersegiVertices(array) {
+  var vertices =  []
+
+  for (let i = 0; i < Math.floor(array.length/4); i++) {
+    // given, (x1, y1) (x2, y2)
+    // find the maximum length between x, y axis
+    const x1 = array[0+i*4];
+    const y1 = array[1+i*4];
+    const x2 = array[2+i*4];
+    const y2 = array[3+i*4];
+
+    var tri1 = [
+      x1, y1,
+      x2, y1,
+      x1, y2,
+    ];
+    
+    var tri2 = [
+      x1, y2,
+      x2, y1,
+      x2, y2
+    ];
+
+    if (!tri1.includes(undefined) && !tri2.includes(undefined)){
+      vertices = vertices.concat(tri1).concat(tri2)
+    }
+  }
+
+  return vertices
+} 
+
 const draw = (gl, array, program, type, name) => {
   var n = createGlBuffer(gl, array, program, name);
   if (n < 0) throw new Error("failed to initialize buffer");
-  // gl.drawArrays(gl.LINE_STRIP, 0, n);
-  // gl.drawArrays(gl.LINE_LOOP, 0, n);
-  // if(name==="triangles")
   gl.drawArrays(type, 0, n);
-  // else
-  //   gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 };
 
 const incColor = (gl, type, fColor, currColor) => {

@@ -30,6 +30,16 @@
       <button id="da-btn">Dec Opacity</button>
     </div>
 
+    <div class="center" id="square-utils" style="display: none;">
+      <p>Input panjang persegi:</p>
+      <input disabled type="text" name="input-square-len" id="input-square-len" />
+      <div id="square_actions">
+        <input type="radio" id="square_action_1" name="square_action" value="Draw Persegi" checked>Draw Persegi
+        <input type="radio" id="square_action_2" name="square_action" value="Ubah Sisi Persegi">Ubah Sisi Persegi
+      </div>
+      <button id="change_square">Change Square</button> 
+    </div>
+
     <div class="center">
       <canvas id="glcanvas" width="800" height=600"></canvas>
     </div>
@@ -84,10 +94,15 @@
 Membuat Garis
 - Klik tombol "Garis"
 - Klik kiri mouse, kemudian drag untuk membuat garis
+
 Membuat Persegi
 - Klik tombol "Persegi"
-- Klik kiri mouse untuk menandakan titik 1
-- klik kiri mouse untuk menandakan titik 2 (diagonal dari titik 1)
+- Akan diberikan 2 pilihan, Draw Persegi atau Ubah sisi persegi
+- Draw persegi untuk membuat persegi baru, Ubah sisi persegi untuk mengubah sisi persegi yang sudah ada
+- Membuat persegi baru caranya adalah dengan memilih 2 titik acak (masing-masing klik kiri pada mouse)
+- Setelah mengubah sisi suatu persegi, jika ingin berpindah dari persegi tersebut ke persegi lainnya, pastikan mengklik tombol 'Change Square' terlebih dahulu
+- Panjang persegi bisa diubah-ubah lewat input box yang diberikan
+
 Membuat Polygon
 - Klik tombol "Polygon"
 - Klik titik-titik yang diinginkan (minimal 3) 
@@ -97,6 +112,7 @@ Export
 Import
 - Pilih json hasil export sebelumnya
 - Klik load model
+
 Merubah Warna
 - Klik tombol "Inc Red" untuk meningkatkan warna merah
 - Klik tombol "Inc Green" untuk meningkatkan warna hijau
