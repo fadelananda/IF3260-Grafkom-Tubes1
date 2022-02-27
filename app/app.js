@@ -77,13 +77,6 @@ function main() {
   var lines = [];
   var start = [];
   var bufferline =[]
-  let squareAttr = {
-    len: 0,
-    point_idx: 0,
-    x_dir: 1,
-    y_dir: 1,
-  }
-
   var currColor = [0, 1, 0, 1];
   document.onkeydown = keyDown;
 
@@ -175,6 +168,13 @@ function main() {
           gl.TRIANGLE_STRIP,
           jsondata.objects.poligon.name
         );
+        draw(
+          gl,
+          jsondata.objects.persegi.vertices,
+          program,
+          gl.TRIANGLES,
+          jsondata.objects.persegi.name
+        )
       });
   };
 
@@ -307,7 +307,6 @@ function main() {
   }
 
   function drawPersegiCanvas() {
-    console.log(squareAction);
     if(squareAction === "Draw Persegi") {
       canvas.onmousedown = (event) => {
         console.log("on draw persegi canvas");
@@ -322,19 +321,14 @@ function main() {
           gl.TRIANGLES,
           objects.persegi.name
         );
-        // checkSquare(getCoordinate(event, canvas));
       }
     } else {
       canvas.onmousedown = function(event) {
-        // var squareLen = document.querySelector("#input-square-len")
-        // var new_square_len = squareLen.cloneNode(true);
-        // squareLen.parentNode.replaceChild(new_square_len, squareLen);
         const { x, y } = getCoordinate(event, canvas);
         const currPoint = {
           x, y
         }
         const currIdxSquare = getNearestSquareFromCurrentPoint(currPoint);
-        // console.log(currIdxSquare);
         if(currIdxSquare != null) {
           const x1 = objects.persegi.vertices[0+currIdxSquare*4];
           const y1 = objects.persegi.vertices[1+currIdxSquare*4];
@@ -348,8 +342,6 @@ function main() {
           squareLen.value = currLen;
 
           const resizeSquare = function(event) {
-            console.log('tes');
-            console.log(currIdxSquare);
             const x1 = objects.persegi.vertices[0+currIdxSquare*4];
             const y1 = objects.persegi.vertices[1+currIdxSquare*4];
             const inputLen =  parseFloat(event.target.value);
@@ -361,14 +353,8 @@ function main() {
             let afterCurrSquare = objects.persegi.vertices.slice(0+(currIdxSquare+1)*4)
             let updatedPoints = [x1, y1, new_x2, new_y2];
             
-            console.log(objects.persegi.vertices);
-            console.log(beforeCurrSquare);
-            console.log(updatedPoints);
-            console.log(afterCurrSquare);
-            
             objects.persegi.vertices = beforeCurrSquare.concat(updatedPoints).concat(afterCurrSquare);
             
-            console.log("After concat:", objects.persegi.vertices)
             gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
@@ -388,7 +374,6 @@ function main() {
 
     function setInitialPersegiCoordinate() {
       const last_idx = objects.persegi.vertices.length/4-1;
-      console.log(objects.persegi.vertices);
       const x1 = objects.persegi.vertices[0+last_idx*4];
       const y1 = objects.persegi.vertices[1+last_idx*4];
       const x2 = objects.persegi.vertices[2+last_idx*4];
