@@ -40,6 +40,7 @@ const objects = {
     name: "poligon",
     vertices: [],
   },
+  color: [0,1,0,1]
 };
 
 function main() {
@@ -77,7 +78,6 @@ function main() {
   var lines = [];
   var start = [];
   var bufferline =[]
-  var currColor = [0, 1, 0, 1];
   document.onkeydown = keyDown;
 
   if (!gl) return;
@@ -147,6 +147,7 @@ function main() {
         return response.json();
       })
       .then((jsondata) => {
+        gl.uniform4f(fColorLocation, jsondata.objects.color[0], jsondata.objects.color[1], jsondata.objects.color[2], jsondata.objects.color[3])
         draw(
           gl,
           jsondata.objects.triangles.vertices,
@@ -180,53 +181,53 @@ function main() {
 
   function keyDown(event) {
     if (document.activeElement.type != "text") {
-      currColor = incColor(
+      objects.color = incColor(
         gl,
         String.fromCharCode(event.keyCode),
         fColorLocation,
-        currColor
+        objects.color
       );
     }
     drawAll();
   }
 
   irBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "R", fColorLocation, currColor);
+    objects.color = incColor(gl, "R", fColorLocation, objects.color);
     drawAll();
   });
 
   igBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "G", fColorLocation, currColor);
+    objects.color = incColor(gl, "G", fColorLocation, objects.color);
     drawAll();
   });
 
   ibBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "B", fColorLocation, currColor);
+    objects.color = incColor(gl, "B", fColorLocation, objects.color);
     drawAll();
   });
 
   iaBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "A", fColorLocation, currColor);
+    objects.color = incColor(gl, "A", fColorLocation, objects.color);
     drawAll();
   });
 
   drBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "T", fColorLocation, currColor);
+    objects.color = incColor(gl, "T", fColorLocation, objects.color);
     drawAll();
   });
 
   dgBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "H", fColorLocation, currColor);
+    objects.color = incColor(gl, "H", fColorLocation, objects.color);
     drawAll();
   });
 
   dbBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "N", fColorLocation, currColor);
+    objects.color = incColor(gl, "N", fColorLocation, objects.color);
     drawAll();
   });
 
   daBtn.addEventListener("click", () => {
-    currColor = incColor(gl, "S", fColorLocation, currColor);
+    objects.color = incColor(gl, "S", fColorLocation, objects.color);
     drawAll();
   });
   function drawAll() {
