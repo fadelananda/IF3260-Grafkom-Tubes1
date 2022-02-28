@@ -44,7 +44,11 @@ const createGlBuffer = (gl, array, program, name, attr) => {
   var vertices = [];
   //gambar persegi panjang
   vertices = gambarPersegiPanjang(array, vertices)
-  console.log(vertices);
+  //gambar garis
+  for (let i = 0; i < array.length; i+=2) {
+    
+    
+  }
   // console.log(vertices)
   if (name === "persegi") {
     vertices = getPersegiVertices(array);
@@ -56,7 +60,8 @@ const createGlBuffer = (gl, array, program, name, attr) => {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
   if (name === "persegi_panjang" || name === "persegi")
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
+  if (name === "lines")
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), gl.STATIC_DRAW);
   var aPosition = gl.getAttribLocation(program, "a_position");
   if (aPosition < 0) throw new Error("failed to get attribute from program");
 
@@ -72,7 +77,7 @@ const createGlBuffer = (gl, array, program, name, attr) => {
 
   // console.log("name");
   // console.log(name);
-  if (name === "triangles" || name === "poligon") return array.length / 2;
+  if (name === "triangles" || name === "poligon" || name==="lines") return array.length / 2;
   if (name === "persegi_panjang" || name === "persegi") return vertices.length / 2;
   // array.length / size;
 };

@@ -40,6 +40,10 @@ const objects = {
     name: "poligon",
     vertices: [],
   },
+  lines:{
+    name: "lines",
+    vertices:[]
+  },
   color: [0,1,0,1]
 };
 
@@ -120,7 +124,7 @@ function main() {
 
   garisBtn.onclick = () => {
     hideSquareUtils();
-    drawLineCanvas();
+    drawLinesCanvas();
   }
 
   persegiBtn.onclick = () => {
@@ -175,6 +179,13 @@ function main() {
           program,
           gl.TRIANGLES,
           jsondata.objects.persegi.name
+        ),
+        draw(
+          gl,
+          jsondata.objects.lines.vertices,
+          program,
+          gl.LINES,
+          jsondata.objects.lines.name
         )
       });
   };
@@ -260,6 +271,13 @@ function main() {
       gl.TRIANGLES,
       objects.persegi.name,
     );
+    draw(
+      gl,
+      objects.lines.vertices,
+      program,
+      gl.TRIANGLES,
+      objects.lines.name
+    )
   }
 
   function drawTriangleCanvas() {
@@ -303,6 +321,21 @@ function main() {
         program,
         gl.TRIANGLE_STRIP,
         objects.poligon.name
+      );
+    };
+  }
+
+  function drawLinesCanvas() {
+    canvas.onmousedown = (event) => {
+      console.log("on draw lines canvas");
+      objects.lines.vertices.push(getCoordinate(event, canvas).x);
+      objects.lines.vertices.push(getCoordinate(event, canvas).y);
+      draw(
+        gl,
+        objects.lines.vertices,
+        program,
+        gl.LINES,
+        objects.lines.name
       );
     };
   }
